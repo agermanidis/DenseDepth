@@ -31,11 +31,13 @@ def setup(opts):
 @runway.command('predict_depth', inputs={'image': runway.image(width=640, height=480)}, outputs={'depth_image': runway.image(channels=1)})
 def predict_depth(graph_and_model, inputs):
     graph, model = graph_and_model
-    img = np.clip(np.asarray(inputs['image'].resize((640, 480)), dtype=float) / 255, 0, 1)
+    img = inputs['image']
+    original_size = img.size
+    img = np.clip(np.asarray(img.resize((640, 480)), dtype=float) / 255, 0, 1)
     img = np.expand_dims(img, 0)
     with graph.as_default():
         outputs = predict(model, img)
-    return Image.fromarray(np.uint8(np.squeeze(outputs) * 255), 'L')
+    return Image.fromarray(np.uint8(np.squeeze(outputs) * 255), 'L').resize(original_size)
 
 
 if __name__ == '__main__':
