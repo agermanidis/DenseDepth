@@ -13,7 +13,7 @@ from PIL import Image
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 
 
-@runway.setup(options={'model_file': runway.file})
+@runway.setup(options={'model_file': runway.file(extension='.h5')})
 def setup(opts):
     print('Loading model...')
     custom_objects = {'BilinearUpSampling2D': BilinearUpSampling2D,
@@ -28,7 +28,7 @@ def setup(opts):
     return graph, model
 
 
-@runway.command('predict_depth', inputs={'image': runway.image(width=640, height=480)}, outputs={'depth_image': runway.image(channels=1)})
+@runway.command('predict_depth', inputs={'image': runway.image}, outputs={'depth_image': runway.image(channels=1)})
 def predict_depth(graph_and_model, inputs):
     graph, model = graph_and_model
     img = inputs['image']
